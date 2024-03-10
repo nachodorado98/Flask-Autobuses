@@ -1,0 +1,150 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #ecf0f5;
+}
+
+.contenido-principal {
+    text-align: center;
+    margin: 50px auto;
+    max-width: 800px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.contenido-principal h1 {
+    font-size: 50px;
+    color: #3498db;
+}
+
+#toggle-navbar {
+    float: right;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+}
+
+.navbar {
+    display: none;
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    background-color: #2980b9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.navbar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar li {
+    margin-bottom: 10px;
+}
+
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s ease-in-out;
+}
+
+.navbar a:hover {
+    color: #3498db;
+}
+
+.tarjetas-autobuses {
+    max-height: calc(70vh - 100px);
+    overflow-y: auto;
+}
+
+.tarjetas-autobuses::-webkit-scrollbar {
+    width: 10px;
+}
+
+.tarjetas-autobuses::-webkit-scrollbar-thumb {
+    background-color: #3498db;
+    border-radius: 5px;
+}
+
+.tarjetas-autobuses-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tarjeta-autobus {
+    width: 600px;
+    margin: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    transition: transform 0.3s ease-in-out;
+}
+
+.tarjeta-autobus h3{
+    font-size: 30px;
+}
+
+.tarjeta-autobus p{
+    font-size: 20px;
+}
+
+.tarjeta-autobus:hover {
+    transform: scale(1.05);
+}
+
+.no-autobuses {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.mensaje-no_autobuses {
+    font-size: 18px;
+    color: #333;
+}
+
+.nueva-linea-button {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #3498db;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.nueva-linea-button:hover {
+    background-color: #2980b9;
+}
+
+footer {
+    margin-top: 5px;
+    padding: 5px;
+    background-color: #2e86c1;
+    color: #fff;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    font-size: 14px;
+    opacity: 0.8;
+    letter-spacing: 1px;
+}

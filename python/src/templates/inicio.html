@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+    <title>Autobuses</title>
+</head>
+<body>
+
+    <div class="contenido-principal">
+
+        {% block titulo %}
+
+        <h1>Lineas de Autobus Recorridas</h1>
+
+        {% endblock titulo %}
+
+        <button id="toggle-navbar" class="toggle-button">
+            <img src="{{ url_for('static', filename='imagenes/hamburguesa.png') }}" alt="Hamburguesa Icon" width="18" height="18">
+        </button>
+
+        <div class="navbar" id="navbar">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+            </ul>
+        </div>
+
+        {% block principal %}
+
+            {% if lineas %}
+
+            <div class="tarjetas-autobuses">
+                <div class="tarjetas-autobuses-wrapper">
+
+                    {% for linea in lineas %}
+                        <div class="tarjeta-autobus">
+                            <h3>Linea {{ linea[1] }}</h3>
+                            <p>{{ linea[2] }} - {{ linea[3] }}</p>
+                        </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            {% else %}
+
+            <div class="no-autobuses">
+                <p class="mensaje-no_autobuses">No hay lineas recorridas aún...</p>
+                <a href="#" class="nueva-linea-button">Añadir Nueva Linea Recorrida</a>
+            </div>
+
+            {% endif %}
+
+        {% endblock principal %}
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
+
+    <footer>
+        <p>&copy; 2024 Autobuses App. Todos los derechos reservados.</p>
+    </footer>
+
+</body>
+</html>
