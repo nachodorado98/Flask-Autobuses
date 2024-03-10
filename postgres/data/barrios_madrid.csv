@@ -1,0 +1,129 @@
+CODIGO,BARRIO,DISTRITO
+1,Acacias,Arganzuela
+2,Atocha,Arganzuela
+3,Chopera,Arganzuela
+4,Delicias,Arganzuela
+5,Imperial,Arganzuela
+6,Legazpi,Arganzuela
+7,Palos de Moguer,Arganzuela
+8,Aeropuerto,Barajas
+9,Alameda de Osuna,Barajas
+10,Casco Histórico de Barajas,Barajas
+11,Corralejos,Barajas
+12,Timón,Barajas
+13,Abrantes,Carabanchel
+14,Buenavista,Carabanchel
+15,Comillas,Carabanchel
+16,Opañel,Carabanchel
+17,Puerta Bonita,Carabanchel
+18,San Isidro,Carabanchel
+19,Vista Alegre,Carabanchel
+20,Cortes,Centro
+21,Embajadores,Centro
+22,Justicia,Centro
+23,Palacio,Centro
+24,Sol,Centro
+25,Universidad,Centro
+26,Castilla,Chamartín
+27,Ciudad Jardín,Chamartín
+28,El Viso,Chamartín
+29,Hispanoamérica,Chamartín
+30,Nueva España,Chamartín
+31,Prosperidad,Chamartín
+32,Almagro,Chamberí
+33,Arapiles,Chamberí
+34,Gaztambide,Chamberí
+35,Rios Rosas,Chamberí
+36,Trafalgar,Chamberí
+37,Vallehermoso,Chamberí
+38,Atalaya,Ciudad Lineal
+39,Colina,Ciudad Lineal
+40,Concepción,Ciudad Lineal
+41,Costillares,Ciudad Lineal
+42,Pueblo Nuevo,Ciudad Lineal
+43,Quintana,Ciudad Lineal
+44,San Juan Bautista,Ciudad Lineal
+45,San Pascual,Ciudad Lineal
+46,Ventas,Ciudad Lineal
+47,El Goloso,Fuencarral - El Pardo
+48,El Pardo,Fuencarral - El Pardo
+49,Fuentelareina,Fuencarral - El Pardo
+50,La Paz,Fuencarral - El Pardo
+51,Mirasierra,Fuencarral - El Pardo
+52,Peñagrande,Fuencarral - El Pardo
+53,Pilar,Fuencarral - El Pardo
+54,Valverde,Fuencarral - El Pardo
+55,Apostol Santiago,Hortaleza
+56,Canillas,Hortaleza
+57,Palomas,Hortaleza
+58,Pinar del Rey,Hortaleza
+59,Piovera,Hortaleza
+60,Valdefuentes,Hortaleza
+61,Aguilas,Latina
+62,Aluche,Latina
+63,Campamento,Latina
+64,Cármenes,Latina
+65,Cuatro Vientos,Latina
+66,Lucero,Latina
+67,Puerta del Angel,Latina
+68,Aravaca,Moncloa - Aravaca
+69,Argüelles,Moncloa - Aravaca
+70,Casa de Campo,Moncloa - Aravaca
+71,Ciudad Universitaria,Moncloa - Aravaca
+72,El Plantío,Moncloa - Aravaca
+73,Valdemarín,Moncloa - Aravaca
+74,Valdezarza,Moncloa - Aravaca
+75,Fontarrón,Moratalaz
+76,Horcajo,Moratalaz
+77,Marroquina,Moratalaz
+78,Media Legua,Moratalaz
+79,Pavones,Moratalaz
+80,Vinateros,Moratalaz
+81,Entrevías,Puente de Vallecas
+82,Numancia,Puente de Vallecas
+83,Palomeras Bajas,Puente de Vallecas
+84,Palomeras Sureste,Puente de Vallecas
+85,Portazgo,Puente de Vallecas
+86,San Diego,Puente de Vallecas
+87,Adelfas,Retiro
+88,Estrella,Retiro
+89,Ibiza,Retiro
+90,Jerónimos,Retiro
+91,Niño Jesús,Retiro
+92,Pacífico,Retiro
+93,Castellana,Salamanca
+94,Fuente del Berro,Salamanca
+95,Goya,Salamanca
+96,Guindalera,Salamanca
+97,Lista,Salamanca
+98,Recoletos,Salamanca
+99,Amposta,San Blas - Canillejas
+100,Arcos,San Blas - Canillejas
+101,Canillejas,San Blas - Canillejas
+102,Hellín,San Blas - Canillejas
+103,Rejas,San Blas - Canillejas
+104,Rosas,San Blas - Canillejas
+105,Salvador,San Blas - Canillejas
+106,Simancas,San Blas - Canillejas
+107,Almenara,Tetuán
+108,Bellas Vistas,Tetuán
+109,Berruguete,Tetuán
+110,Castillejos,Tetuán
+111,Cuatro Caminos,Tetuán
+112,Valdeacederas,Tetuán
+113,Almendrales,Usera
+114,Moscardó,Usera
+115,Orcasitas,Usera
+116,Orcasur,Usera
+117,Pradolongo,Usera
+118,San Fermín,Usera
+119,Zofío,Usera
+120,Ambroz,Vicálvaro
+121,Casco Histórico de Vicálvaro,Vicálvaro
+122,Casco Histórico de Vallecas,Villa de Vallecas
+123,Santa Eugenia,Villa de Vallecas
+124,Butarque,Villaverde
+125,Los Angeles,Villaverde
+126,Los Rosales,Villaverde
+127,San Andrés,Villaverde
+128,San Cristobal,Villaverde
