@@ -23,6 +23,7 @@
         <div class="navbar" id="navbar">
             <ul>
                 <li><a href="/">Inicio</a></li>
+                <li><a href="/anadir_linea">Añadir Linea Recorrida</a></li>
             </ul>
         </div>
 
@@ -46,8 +47,8 @@
             {% else %}
 
             <div class="no-autobuses">
-                <p class="mensaje-no_autobuses">No hay lineas recorridas aún...</p>
-                <a href="#" class="nueva-linea-button">Añadir Nueva Linea Recorrida</a>
+                <p class="mensaje-no-autobuses">No hay lineas recorridas aún...</p>
+                <a href="/anadir_linea" class="nueva-linea-button">Añadir Nueva Linea Recorrida</a>
             </div>
 
             {% endif %}

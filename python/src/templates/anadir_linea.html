@@ -1,0 +1,41 @@
+{% extends 'inicio.html' %}
+
+{% block titulo %}
+
+<h1>Añadir Nueva Linea Recorrida</h1>
+
+{% endblock titulo %}
+
+{% block principal %}
+
+{% if lineas %}
+
+<div class="contenedor-form">
+    <h2 class="texto-seleccionar">Selecciona una de las lineas</h2>
+    <form action="/insertar_linea" method="POST" class="form">
+        <select name="linea" id="linea" class="seleccion">
+
+            {% for linea in lineas %}
+            	<option value="{{ linea[0] }}">
+            		Linea {{ linea[1] }} {{ linea[2] }} - {{ linea[3] }}
+            	</option>
+            {% endfor %}
+            
+        </select>
+        <input type="submit" value="Añadir linea" class="seleccion-button">
+    </form>
+</div>
+    
+{% else %}
+
+<div class="no-lineas">
+    <p class="mensaje-no-lineas-titulo"><strong>¡ENHORABUENA!</strong></p>
+    <p class="mensaje-no-lineas">Ya no hay ninguna linea por recorrer.</p>
+    <p class="mensaje-no-lineas">Has recorrido todas las lineas existentes.</p>
+    <a href="/" class="no-linea-button">Volver a Inicio</a>
+</div>
+
+{% endif %}
+
+
+{% endblock principal %}

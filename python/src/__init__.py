@@ -1,6 +1,7 @@
 from flask import Flask
 
 from .blueprints.inicio import bp_inicio
+from .blueprints.anadir_linea import bp_anadir_linea
 
 # Funcion para crear la instancia de la aplicacion
 def crear_app(configuracion:object)->Flask:
@@ -10,5 +11,6 @@ def crear_app(configuracion:object)->Flask:
 	app.config.from_object(configuracion)
 
 	app.register_blueprint(bp_inicio)
+	app.register_blueprint(bp_anadir_linea)
 
 	return app

@@ -4,7 +4,7 @@ from src.database.conexion import Conexion
 
 bp_inicio=Blueprint("inicio", __name__)
 
-@bp_inicio.route("/", methods=["GET"])
+@bp_inicio.route("/")
 def inicio():
 
 	con=Conexion()
