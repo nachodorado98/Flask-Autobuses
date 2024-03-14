@@ -113,3 +113,76 @@ def test_anadir_linea_recorrida(conexion, id_linea):
 	lineas_recorridas=conexion.obtenerLineasRecorridas()
 
 	assert len(lineas_recorridas)==1
+
+@pytest.mark.parametrize(["id_linea"],
+	[(0,),(3400,),(-9,),(1392,)]
+)
+def test_obtener_detalle_linea_no_existe(conexion, id_linea):
+
+	assert conexion.obtenerDetalleLinea(id_linea) is None
+
+@pytest.mark.parametrize(["id_linea"],
+	[(1,),(34,),(9,),(139,)]
+)
+def test_obtener_detalle_linea(conexion, id_linea):
+
+	datos=conexion.obtenerDetalleLinea(id_linea)
+
+	assert len(datos)==4
+
+@pytest.mark.parametrize(["id_linea"],
+	[(0,),(3400,),(-9,),(1392,)]
+)
+def test_numero_paradas_linea_no_tiene(conexion, id_linea):
+
+	assert conexion.numero_paradas(id_linea)==0
+
+@pytest.mark.parametrize(["id_linea", "paradas"],
+	[
+		(1, 60),
+		(34, 82),
+		(9, 70),
+		(139, 47)
+	]
+)
+def test_numero_paradas_linea(conexion, id_linea, paradas):
+
+	assert conexion.numero_paradas(id_linea)==paradas
+
+@pytest.mark.parametrize(["id_linea"],
+	[(0,),(3400,),(-9,),(1392,)]
+)
+def test_numero_paradas_linea_sentido_ida_no_tiene(conexion, id_linea):
+
+	assert conexion.numero_paradas_sentido(id_linea)==0
+
+@pytest.mark.parametrize(["id_linea", "paradas"],
+	[
+		(1, 30),
+		(34, 41),
+		(9, 34),
+		(139, 23)
+	]
+)
+def test_numero_paradas_linea_sentido_ida(conexion, id_linea, paradas):
+
+	assert conexion.numero_paradas_sentido(id_linea)==paradas
+
+@pytest.mark.parametrize(["id_linea"],
+	[(0,),(3400,),(-9,),(1392,)]
+)
+def test_numero_paradas_linea_sentido_vuelta_no_tiene(conexion, id_linea):
+
+	assert conexion.numero_paradas_sentido(id_linea, "VUELTA")==0
+
+@pytest.mark.parametrize(["id_linea", "paradas"],
+	[
+		(1, 30),
+		(34, 41),
+		(9, 36),
+		(139, 24)
+	]
+)
+def test_numero_paradas_linea_sentido_vuelta(conexion, id_linea, paradas):
+
+	assert conexion.numero_paradas_sentido(id_linea, "VUELTA")==paradas

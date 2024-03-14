@@ -1,0 +1,24 @@
+{% extends 'inicio.html' %}
+
+{% block titulo %}
+
+<h1>Detalle de la Linea {{ linea }}</h1>
+
+{% endblock titulo %}
+
+{% block principal %}
+
+<div class="tarjeta-detalle-autobus">
+    <h3>{{ inicio_linea }} - {{ fin_linea }}</h3>
+    <p>Autobus {{ tipo_linea }}</p>
+    <p>Numero de paradas de la linea {{ linea }}: {{ total_paradas }} paradas ({{ paradas_ida }} Ida - {{ paradas_vuelta }} Vuelta)</p>
+    <a href="#">Recorrido Linea {{ linea }}</a>
+    <a href="#">Seleccionar paradas favoritas</a>
+</div>
+
+
+<div class="contenedor-volver">
+    <a href="/" class="volver-button">Volver</a>
+</div>
+
+{% endblock principal %}

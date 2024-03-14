@@ -35,7 +35,7 @@
                 <div class="tarjetas-autobuses-wrapper">
 
                     {% for linea in lineas %}
-                        <div class="tarjeta-autobus">
+                        <div class="tarjeta-autobus" onclick="window.location.href='/detalle_linea/{{ linea[0] }}'">
                             <h3>Linea {{ linea[1] }}</h3>
                             <p>{{ linea[2] }} - {{ linea[3] }}</p>
                         </div>
