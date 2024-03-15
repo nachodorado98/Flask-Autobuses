@@ -30,6 +30,9 @@ def conexion():
 	conexion.c.execute("""UPDATE lineas
 							SET Recorrida=False""")
 
+	conexion.c.execute("""UPDATE paradas
+						SET Favorita=False""")
+
 	conexion.confirmar()
 
 	return conexion

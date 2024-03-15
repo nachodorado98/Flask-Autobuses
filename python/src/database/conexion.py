@@ -85,18 +85,69 @@ class Conexion:
 
 		self.c.execute("""SELECT COUNT(1) as Numero_paradas
 							FROM paradas
-							WHERE Id_Linea=%s;""",
+							WHERE Id_Linea=%s""",
 							(id_linea,))
 
 		return self.c.fetchone()["numero_paradas"]
 
-		# Metodo para obtener numero de paradas de una linea en un sentido especifico
+	# Metodo para obtener numero de paradas de una linea en un sentido especifico
 	def numero_paradas_sentido(self, id_linea:int, sentido:str="IDA")->int:
 
 		self.c.execute("""SELECT COUNT(1) as Numero_paradas
 							FROM paradas
 							WHERE Id_Linea=%s
-							AND Sentido=%s;""",
+							AND Sentido=%s""",
 							(id_linea, sentido))
 
 		return self.c.fetchone()["numero_paradas"]
+
+	# Metodo para saber el nombre de a linea a partir de su id
+	def nombre_linea(self, id_linea:int)->Optional[str]:
+
+		self.c.execute("""SELECT Linea as Nombre_Linea
+							FROM lineas
+							WHERE Id_Linea=%s""",
+							(id_linea,))
+
+		nombre=self.c.fetchone()
+
+		return None if nombre is None else nombre["nombre_linea"]
+
+	# Metodo para obtener las paradas que no son favoritas de una linea
+	def paradas_no_favoritas(self, id_linea:int)->Optional[List[tuple]]:
+
+		self.c.execute("""SELECT Id_Parada, Parada, Nombre, Sentido
+							FROM paradas
+							WHERE Id_Linea=%s
+							AND Favorita=False
+							ORDER BY Sentido, Parada""",
+							(id_linea,))
+
+		paradas=self.c.fetchall()
+
+		return list(map(lambda parada: (parada["id_parada"],
+										parada["parada"],
+										parada["nombre"],
+										parada["sentido"]), paradas)) if paradas else None
+
+	# Metodo para comprobar que existe la parada
+	def existe_parada(self, parada:int)->bool:
+
+		self.c.execute("""SELECT *
+							FROM paradas
+							WHERE Parada=%s""",
+							(parada,))
+
+		parada=self.c.fetchone()
+
+		return False if parada is None else True
+
+	# Metodo para añadir una parada a favorita
+	def anadirParadaFavorita(self, parada:int)->None:
+
+		self.c.execute("""UPDATE paradas
+							SET Favorita=True
+							WHERE Parada=%s""",
+							(parada,))
+
+		self.confirmar()

@@ -186,3 +186,115 @@ def test_numero_paradas_linea_sentido_vuelta_no_tiene(conexion, id_linea):
 def test_numero_paradas_linea_sentido_vuelta(conexion, id_linea, paradas):
 
 	assert conexion.numero_paradas_sentido(id_linea, "VUELTA")==paradas
+
+@pytest.mark.parametrize(["id_linea"],
+	[(0,),(3400,),(-9,),(1392,)]
+)
+def test_nombre_linea_no_existe(conexion, id_linea):
+
+	assert conexion.nombre_linea(id_linea) is None
+
+@pytest.mark.parametrize(["id_linea", "linea"],
+	[
+		(1,"1"),
+		(34,"34"),
+		(68,"C1"),
+		(69,"C2")
+	]
+)
+def test_nombre_linea(conexion, id_linea, linea):
+
+	assert conexion.nombre_linea(id_linea)==linea
+
+@pytest.mark.parametrize(["id_linea"],
+	[(0,),(3400,),(-9,),(1392,)]
+)
+def test_paradas_no_favoritas_no_existe(conexion, id_linea):
+
+	assert conexion.paradas_no_favoritas(id_linea) is None
+
+@pytest.mark.parametrize(["id_linea", "paradas"],
+	[
+		(1, 60),
+		(34, 82),
+		(9, 70),
+		(139, 47)
+	]
+)
+def test_paradas_no_favoritas_sin_favoritas(conexion, id_linea, paradas):
+
+	paradas_no_favoritas=conexion.paradas_no_favoritas(id_linea)
+
+	assert len(paradas_no_favoritas)==paradas
+
+@pytest.mark.parametrize(["id_linea", "parada", "paradas"],
+	[
+		(1, 70, 60),
+		(34, 356, 82),
+		(9, 2011, 70),
+		(139, 650, 47)
+	]
+)
+def test_paradas_no_favoritas_una_favorita(conexion, id_linea, parada, paradas):
+
+	conexion.c.execute(f"""UPDATE paradas
+							SET Favorita=True
+							WHERE Parada={parada}
+							AND Id_Linea={id_linea}""")
+
+	conexion.confirmar()
+
+	paradas_no_favoritas=conexion.paradas_no_favoritas(id_linea)
+
+	assert len(paradas_no_favoritas)==paradas-1
+
+@pytest.mark.parametrize(["id_linea"],
+	[(1,),(34,),(9,),(139,)]
+)
+def test_paradas_no_favoritas_todas_favoritas(conexion, id_linea):
+
+	conexion.c.execute(f"""UPDATE paradas
+							SET Favorita=True
+							AND Id_Linea={id_linea}""")
+
+	conexion.confirmar()
+
+	assert conexion.paradas_no_favoritas(id_linea) is None
+
+
+@pytest.mark.parametrize(["parada"],
+	[(0,),(3400,),(-9,),(1392,)]
+)
+def test_existe_parada_no_existe(conexion, parada):
+
+	assert not conexion.existe_parada(parada)
+
+@pytest.mark.parametrize(["parada"],
+	[(1,),(70,),(356,),(2011,)]
+)
+def test_existe_parada_existe(conexion, parada):
+
+	assert conexion.existe_parada(parada)
+
+@pytest.mark.parametrize(["parada", "numero_paradas"],
+	[
+		(1,1),
+		(70,15),
+		(2011,3),
+		(356,2)]
+)
+def test_anadir_parada_favorita(conexion, parada, numero_paradas):
+
+	conexion.anadirParadaFavorita(parada)
+
+	conexion.c.execute("""SELECT Parada
+						FROM paradas
+						WHERE Favorita=True""")
+
+	paradas_favoritas=conexion.c.fetchall()
+
+	assert len(paradas_favoritas)==numero_paradas
+
+	for parada_favorita in paradas_favoritas:
+
+		assert parada_favorita["parada"]==parada

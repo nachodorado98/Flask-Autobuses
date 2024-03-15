@@ -1,0 +1,42 @@
+{% extends 'inicio.html' %}
+
+{% block titulo %}
+
+<h1>Añadir Parada Favorita Linea {{ linea }}</h1>
+
+{% endblock titulo %}
+
+{% block principal %}
+
+{% if paradas %}
+
+<div class="contenedor-form-paradas">
+    <h2 class="texto-seleccionar-paradas">Selecciona una de las paradas</h2>
+    <form action="/insertar_parada" method="POST" class="form-paradas">
+        <select name="parada" id="parada" class="seleccion-paradas">
+
+            {% for parada in paradas %}
+            	<option value="{{ parada[1] }}">
+            		{{ parada[1] }} - Parada {{ parada[2] }} ({{ parada[3] }})
+            	</option>
+            {% endfor %}
+            
+        </select>
+        <input type="submit" value="Añadir parada" class="seleccion-button-paradas">
+    </form>
+    <div class="contenedor-cancelar-parada">
+        <a href="/detalle_linea/{{ id_linea }}" class="cancelar-button-parada">Cancelar</a>
+    </div>
+</div>
+    
+{% else %}
+
+<div class="no-paradas">
+    <p class="mensaje-no-paradas-titulo"><strong>¡VAYAAA!</strong></p>
+    <p class="mensaje-no-paradas">Parece que ya no hay mas paradas de esta linea para escoger</p>
+    <a href="/detalle_linea/{{ id_linea }}" class="no-paradas-button">Volver</a>
+</div>
+
+{% endif %}
+
+{% endblock principal %}

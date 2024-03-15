@@ -24,6 +24,7 @@ def detalle_linea(id_linea:int):
 	con.cerrarConexion()
 
 	return render_template("detalle_linea.html",
+							id_linea=id_linea,
 							linea=linea,
 							inicio_linea=inicio,
 							fin_linea=fin,
