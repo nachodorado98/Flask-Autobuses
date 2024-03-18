@@ -151,3 +151,31 @@ class Conexion:
 							(parada,))
 
 		self.confirmar()
+
+	# Metodo para obtener las paradas favoritas
+	def paradas_favoritas(self)->Optional[List[tuple]]:
+
+		self.c.execute("""SELECT p.Parada, p.Nombre, p.Comentario, STRING_AGG(l.Linea, ', ') AS Lineas
+							FROM paradas p
+							JOIN lineas l
+							USING (id_linea)
+							WHERE Favorita=True
+							GROUP BY p.Parada, p.Nombre, p.Comentario
+							ORDER BY p.Parada""")
+
+		paradas=self.c.fetchall()
+
+		return list(map(lambda parada: (parada["parada"],
+										parada["nombre"],
+										parada["comentario"],
+										parada["lineas"]), paradas)) if paradas else None
+
+	# Metodo para eliminar una parada a favorita
+	def eliminarParadaFavorita(self, parada:int)->None:
+
+		self.c.execute("""UPDATE paradas
+							SET Favorita=False
+							WHERE Parada=%s""",
+							(parada,))
+
+		self.confirmar()
