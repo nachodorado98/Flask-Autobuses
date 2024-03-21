@@ -337,3 +337,41 @@ def test_eliminar_parada_favorita(conexion, parada):
 	conexion.eliminarParadaFavorita(parada)
 
 	assert conexion.paradas_favoritas() is None
+
+@pytest.mark.parametrize(["parada"],
+	[(1,),(70,),(356,),(2011,)]
+)
+def test_no_es_favorita(conexion, parada):
+
+	assert not conexion.es_favorita(parada)
+
+@pytest.mark.parametrize(["parada"],
+	[(1,),(70,),(356,),(2011,)]
+)
+def test_es_favorita(conexion, parada):
+
+	conexion.anadirParadaFavorita(parada)
+
+	assert conexion.es_favorita(parada)
+
+@pytest.mark.parametrize(["parada"],
+	[(0,),(3400,),(-9,),(1392,)]
+)
+def test_detalle_parada_no_existe(conexion, parada):
+
+	assert conexion.detalle_parada(parada) is None
+
+@pytest.mark.parametrize(["parada", "numero_paradas"],
+	[
+		(1,1),
+		(70,15),
+		(2011,3),
+		(356,2)]
+)
+def test_detalle_parada_existe(conexion, parada, numero_paradas):
+
+	parada=conexion.detalle_parada(parada)
+
+	lineas=parada[-1].split(", ")
+
+	assert len(lineas)==numero_paradas

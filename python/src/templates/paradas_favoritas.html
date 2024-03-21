@@ -14,7 +14,7 @@
     <div class="tarjetas-paradas-wrapper">
 
         {% for parada in paradas %}
-            <div class="tarjeta-paradas" onclick="window.location.href='#'">
+            <div class="tarjeta-paradas" onclick="window.location.href='/detalle_parada/{{ parada[0] }}'">
                 <h3>Nº {{ parada[0] }}</h3>
                 <p>{{ parada[1] }}</p>
                 {% if parada[2] is not none %}

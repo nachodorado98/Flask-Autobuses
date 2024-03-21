@@ -1,0 +1,40 @@
+{% extends 'inicio.html' %}
+
+{% block titulo %}
+
+<h1>Detalle de la Parada Nº {{ parada }}</h1>
+
+{% endblock titulo %}
+
+{% block principal %}
+
+<div class="tarjeta-detalle-parada">
+    <h3>{{ nombre }}</h3>
+    {% if comentario is not none %}
+        <p>{{ comentario }}</p>
+    {% endif %}
+    <p> 
+        {% if barrio!="-" %}
+            Barrio de {{ barrio }}, Distrito {{ distrito }} ({{ ciudad }})
+        {% else %}
+            {{ ciudad }}
+        {% endif %}
+    </p>
+    <p>Lineas: {{ lineas }}</p>
+    <div id="mapa-parada-favorita" class="mapa-parada-favorita"></div>
+    <script>
+        var map=L.map("mapa-parada-favorita").setView([{{ latitud }}, {{ longitud }}], 15);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 19}).addTo(map);
+
+        var texto="{{ nombre }} - Parada {{ parada }}";
+
+        var marker=L.marker([{{ latitud }}, {{ longitud }}]).bindPopup(texto).addTo(map);
+    </script>
+</div>
+
+<div class="contenedor-volver-favoritas">
+    <a href="/paradas_favoritas" class="volver-favoritas-button">Volver</a>
+</div>
+
+{% endblock principal %}

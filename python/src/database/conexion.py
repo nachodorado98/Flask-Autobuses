@@ -179,3 +179,44 @@ class Conexion:
 							(parada,))
 
 		self.confirmar()
+
+	# Metodo para comprobar si la parada es favorita
+	def es_favorita(self, parada:int)->bool:
+
+		self.c.execute("""SELECT *
+							FROM paradas
+							WHERE Parada=%s
+							AND Favorita=True""",
+							(parada,))
+
+		parada=self.c.fetchone()
+
+		return False if parada is None else True
+
+	# Metodo para obtener el detalle de la parada 
+	def detalle_parada(self, parada:int)->Optional[tuple]:
+
+		self.c.execute("""SELECT p.Parada, p.Nombre, p.Comentario, p.Zona, p.Latitud, p.Longitud,
+							p.Municipio, b.Barrio, b.Distrito, STRING_AGG(l.Linea, ', ') AS Lineas
+							FROM paradas p
+							JOIN lineas l
+							USING (id_linea)
+							JOIN barrios b
+							USING (id_barrio)
+							WHERE Parada=%s
+							GROUP BY p.Parada, p.Nombre, p.Comentario, p.Zona, p.Latitud,
+							p.Longitud, p.Municipio, b.Barrio, b.Distrito""",
+							(parada,))
+
+		parada=self.c.fetchone()
+
+		return None if parada is None else (parada["parada"],
+											parada["nombre"],
+											parada["comentario"],
+											parada["zona"],
+											parada["latitud"],
+											parada["longitud"],
+											parada["municipio"],
+											parada["barrio"],
+											parada["distrito"],
+											parada["lineas"])

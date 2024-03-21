@@ -278,7 +278,6 @@ footer {
     background-color: #2980b9;
 }
 
-
 .contenedor-volver {
     text-align: center;
     margin-top: 20px;
@@ -490,5 +489,58 @@ footer {
 }
 
 .nueva-parada-favorita-button:hover {
+    background-color: #2980b9;
+}
+
+/*----------------------------------------DETALLE PARADA---------------------------------------------*/
+
+.tarjeta-detalle-parada {
+    text-align: center;
+    margin: 20px auto;
+    max-width: 600px;
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.tarjeta-detalle-parada h3 {
+    font-size: 30px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.tarjeta-detalle-parada p {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.tarjeta-detalle-parada .mapa-parada-favorita {
+    height: 250px;
+    width: 100%;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.contenedor-volver-favoritas {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.volver-favoritas-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.volver-favoritas-button:hover {
     background-color: #2980b9;
 }

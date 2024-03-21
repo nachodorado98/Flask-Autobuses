@@ -5,6 +5,7 @@ from .blueprints.anadir_linea import bp_anadir_linea
 from .blueprints.detalle_linea import bp_detalle_linea
 from .blueprints.anadir_parada import bp_anadir_parada
 from .blueprints.paradas_favoritas import bp_paradas_favoritas
+from .blueprints.detalle_parada import bp_detalle_parada
 
 # Funcion para crear la instancia de la aplicacion
 def crear_app(configuracion:object)->Flask:
@@ -18,5 +19,6 @@ def crear_app(configuracion:object)->Flask:
 	app.register_blueprint(bp_detalle_linea)
 	app.register_blueprint(bp_anadir_parada)
 	app.register_blueprint(bp_paradas_favoritas)
+	app.register_blueprint(bp_detalle_parada)
 
 	return app
