@@ -1,4 +1,5 @@
-FROM python:3.10-alpine
+# Slim solventa error de pandas
+FROM python:3.10-slim
 
 RUN mkdir /app
 
@@ -7,8 +8,9 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Solventa error de psycopg2
-RUN apk update
-RUN apk add postgresql-dev gcc python3-dev musl-dev
+RUN apt-get update \
+	&& apt-get install -y libpq-dev gcc \
+	&& rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir -r requirements.txt
 

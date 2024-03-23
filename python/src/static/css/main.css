@@ -516,12 +516,19 @@ footer {
     margin-bottom: 20px;
 }
 
-.tarjeta-detalle-parada .mapa-parada-favorita {
-    height: 250px;
-    width: 100%;
+.contenedor-mapa-mundial {
+    margin-top: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.contenedor-mapa-mundial iframe {
     border: 2px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    width: 1000px;
+    height: 250px;
+    margin-top: 5px;
+    margin-bottom: 2px;
 }
 
 .contenedor-volver-favoritas {

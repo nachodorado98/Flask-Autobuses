@@ -1,6 +1,9 @@
-from flask import Blueprint, render_template, redirect
+from flask import Blueprint, render_template, redirect, send_file
+import os
 
 from src.database.conexion import Conexion
+
+from src.utilidades.utils import eliminarPosiblesMapasFolium, crearMapaFolium
 
 bp_detalle_parada=Blueprint("detalle_parada", __name__)
 
@@ -17,18 +20,36 @@ def detalle_parada(parada:int):
 
 		return redirect("/")	
 
-	parada, nombre, comentario, zona, lat, lon, ciudad, barrio, distrito, lineas=con.detalle_parada(parada)
+	numero_parada, nombre, comentario, zona, lat, lon, ciudad, barrio, distrito, lineas=con.detalle_parada(parada)
 
 	con.cerrarConexion()
 
+	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
+
+	nombre_mapa=f"mapa_parada_{parada}.html"
+
+	eliminarPosiblesMapasFolium(ruta)
+
+	datos_parada={"parada":nombre, "numero_parada":numero_parada, "latitud":lat, "longitud":lon}
+
+	crearMapaFolium(ruta, [barrio], datos_parada, nombre_mapa)
+
 	return render_template("detalle_parada.html",
-							parada=parada,
+							parada=numero_parada,
 							nombre=nombre,
 							comentario=comentario,
 							zona=zona,
-							latitud=lat,
-							longitud=lon,
 							ciudad=ciudad,
 							barrio=barrio,
 							distrito=distrito,
-							lineas=lineas)
+							lineas=lineas,
+							nombre_mapa=nombre_mapa)
+
+@bp_detalle_parada.route("/visualizar_mapa_parada/<nombre_mapa>")
+def visualizarMapaParada(nombre_mapa:str):
+
+	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
+
+	ruta_mapa=os.path.join(ruta, "templates", "templates_mapas_paradas", nombre_mapa)
+
+	return send_file(ruta_mapa)

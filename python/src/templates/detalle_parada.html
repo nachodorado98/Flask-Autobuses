@@ -21,16 +21,11 @@
         {% endif %}
     </p>
     <p>Lineas: {{ lineas }}</p>
-    <div id="mapa-parada-favorita" class="mapa-parada-favorita"></div>
-    <script>
-        var map=L.map("mapa-parada-favorita").setView([{{ latitud }}, {{ longitud }}], 15);
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 19}).addTo(map);
-
-        var texto="{{ nombre }} - Parada {{ parada }}";
-
-        var marker=L.marker([{{ latitud }}, {{ longitud }}]).bindPopup(texto).addTo(map);
-    </script>
+    <div class="contenedor-mapa-mundial">
+        <iframe src="/visualizar_mapa_parada/{{ nombre_mapa }}"></iframe>
+    </div>
+    
 </div>
 
 <div class="contenedor-volver-favoritas">

@@ -42,5 +42,6 @@ def test_pagina_detalle_parada_existe_es_favorita(cliente, conexion, parada):
 	assert "Barrio de" in contenido
 	assert "Distrito" in contenido
 	assert "(MADRID)" in contenido
-	assert '<div id="mapa-parada-favorita" class="mapa-parada-favorita"></div>' in contenido
+	assert "iframe" in contenido
+	assert f"/visualizar_mapa_parada/mapa_parada_{parada}.html" in contenido
 	assert "Volver" in contenido
