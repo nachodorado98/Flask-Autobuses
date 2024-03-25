@@ -551,3 +551,51 @@ footer {
 .volver-favoritas-button:hover {
     background-color: #2980b9;
 }
+
+/*----------------------------------------DETALLE RECORRIDO---------------------------------------------*/
+
+.tarjeta-detalle-recorrido {
+    text-align: center;
+    margin: 20px auto;
+    max-width: 600px;
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.contenedor-mapa-mundial-recorrido {
+    margin-top: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.contenedor-mapa-mundial-recorrido iframe {
+    border: 2px solid #ccc;
+    width: 1500px;
+    height: 350px;
+    margin-top: 5px;
+    margin-bottom: 2px;
+}
+
+.contenedor-volver-linea {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.volver-linea-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.volver-linea-button:hover {
+    background-color: #2980b9;
+}

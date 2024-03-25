@@ -375,3 +375,78 @@ def test_detalle_parada_existe(conexion, parada, numero_paradas):
 	lineas=parada[-1].split(", ")
 
 	assert len(lineas)==numero_paradas
+
+@pytest.mark.parametrize(["id_linea"],
+	[(0,),(3400,),(-9,),(1392,)]
+)
+def test_paradas_linea_sentido_no_existe(conexion, id_linea):
+
+	assert conexion.paradas_linea_sentido(id_linea) is None
+
+@pytest.mark.parametrize(["id_linea"],
+	[(1,),(34,),(9,),(139,)]
+)
+def test_paradas_linea_sentido_existe_ida(conexion, id_linea):
+
+	paradas_ida=conexion.paradas_linea_sentido(id_linea)
+
+	numero_paradas_ida=conexion.numero_paradas_sentido(id_linea)
+
+	assert len(paradas_ida)==numero_paradas_ida
+
+@pytest.mark.parametrize(["id_linea"],
+	[(1,),(34,),(9,),(139,)]
+)
+def test_paradas_linea_sentido_existe_vuelta(conexion, id_linea):
+
+	paradas_vuelta=conexion.paradas_linea_sentido(id_linea, "VUELTA")
+
+	numero_paradas_vuelta=conexion.numero_paradas_sentido(id_linea, "VUELTA")
+
+	assert len(paradas_vuelta)==numero_paradas_vuelta
+
+@pytest.mark.parametrize(["id_linea"],
+	[(0,),(3400,),(-9,),(1392,)]
+)
+def test_obtener_recorrido_linea_no_existe(conexion, id_linea):
+
+	assert conexion.obtenerRecorridoLinea(id_linea) is None
+
+@pytest.mark.parametrize(["id_linea"],
+	[(1,),(34,),(9,),(139,)]
+)
+def test_obtener_recorrido_linea_existe(conexion, id_linea):
+
+	paradas_ida, paradas_vuelta=conexion.obtenerRecorridoLinea(id_linea)
+
+	numero_paradas_ida=conexion.numero_paradas_sentido(id_linea)
+
+	numero_paradas_vuelta=conexion.numero_paradas_sentido(id_linea, "VUELTA")
+
+	assert len(paradas_ida)==numero_paradas_ida
+	assert len(paradas_vuelta)==numero_paradas_vuelta
+
+	numero_paradas=conexion.numero_paradas(id_linea)
+
+	assert numero_paradas==numero_paradas_ida+numero_paradas_vuelta
+
+@pytest.mark.parametrize(["id_linea"],
+	[(0,),(3400,),(-9,),(1392,)]
+)
+def test_barrios_linea_no_existe(conexion, id_linea):
+
+	assert not conexion.barrios_linea(id_linea)
+
+@pytest.mark.parametrize(["id_linea", "numero_barrios"],
+	[
+		(1, 10),
+		(34, 9),
+		(9, 11),
+		(139, 6)
+	]
+)
+def test_barrios_linea_existe(conexion, id_linea, numero_barrios):
+
+	barrios=conexion.barrios_linea(id_linea)
+
+	assert len(barrios)==numero_barrios

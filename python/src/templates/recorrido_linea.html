@@ -1,0 +1,21 @@
+{% extends 'inicio.html' %}
+
+{% block titulo %}
+
+<h1>Recorrido de la linea {{ linea }}</h1>
+
+{% endblock titulo %}
+
+{% block principal %}
+
+<div class="tarjeta-detalle-recorrido">
+    <div class="contenedor-mapa-mundial-recorrido">
+        <iframe src="/visualizar_mapa_recorrido/{{ nombre_mapa }}"></iframe>
+    </div>
+</div>
+
+<div class="contenedor-volver-linea">
+    <a href="/detalle_linea/{{ id_linea }}" class="volver-linea-button">Volver a la linea {{ linea }}</a>
+</div>
+
+{% endblock principal %}

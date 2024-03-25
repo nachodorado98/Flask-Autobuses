@@ -220,3 +220,46 @@ class Conexion:
 											parada["barrio"],
 											parada["distrito"],
 											parada["lineas"])
+
+	# Metodo para obtener las paradas de una linea en un sentido especifico
+	def paradas_linea_sentido(self, id_linea:int, sentido:str="IDA")->Optional[List[tuple]]:
+
+		self.c.execute("""SELECT Parada, Nombre, Latitud, Longitud
+							FROM paradas
+							WHERE Id_Linea=%s
+							AND Sentido=%s""",
+							(id_linea, sentido))
+
+		paradas=self.c.fetchall()
+
+		return list(map(lambda parada: (parada["parada"],
+										parada["nombre"],
+										parada["latitud"],
+										parada["longitud"]), paradas)) if paradas else None
+
+	# Metodo para obtener el recorrido de paradas de una linea
+	def obtenerRecorridoLinea(self, id_linea:int)->Optional[tuple[List[tuple]]]:
+
+		if not self.existe_linea(id_linea):
+
+			return None
+
+		else:
+
+			return self.paradas_linea_sentido(id_linea), self.paradas_linea_sentido(id_linea, "VUELTA")
+
+	# Metodo para obtener los barrios de una linea
+	def barrios_linea(self, id_linea:int)->List[Optional[str]]:
+
+		self.c.execute("""SELECT DISTINCT(b.Barrio)
+						FROM paradas p
+						JOIN barrios b
+						USING(Id_Barrio)
+						WHERE Id_Linea=%s""",
+						(id_linea,))
+
+		barrios=self.c.fetchall()
+
+		return list(map(lambda barrio: barrio["barrio"], barrios))
+
+

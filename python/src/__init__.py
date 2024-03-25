@@ -7,6 +7,7 @@ from .blueprints.detalle_linea import bp_detalle_linea
 from .blueprints.anadir_parada import bp_anadir_parada
 from .blueprints.paradas_favoritas import bp_paradas_favoritas
 from .blueprints.detalle_parada import bp_detalle_parada
+from .blueprints.recorrido_linea import bp_recorrido_linea
 
 from .utilidades.utils import crearCarpeta
 
@@ -18,6 +19,7 @@ def creacionEntorno()->None:
 	ruta_src=os.path.join(ruta, "src")
 
 	crearCarpeta(os.path.join(ruta_src, "templates", "templates_mapas_paradas"))
+	crearCarpeta(os.path.join(ruta_src, "templates", "templates_mapas_recorrido"))
 
 # Funcion para crear la instancia de la aplicacion
 def crear_app(configuracion:object)->Flask:
@@ -32,6 +34,7 @@ def crear_app(configuracion:object)->Flask:
 	app.register_blueprint(bp_anadir_parada)
 	app.register_blueprint(bp_paradas_favoritas)
 	app.register_blueprint(bp_detalle_parada)
+	app.register_blueprint(bp_recorrido_linea)
 
 	creacionEntorno()
 

@@ -2,6 +2,7 @@ import os
 import pytest
 
 from src.utilidades.utils import crearCarpeta, eliminarPosiblesMapasFolium, leerGeoJSON, crearMapaFolium
+from src.utilidades.utils import crearMapaFoliumRecorrido
 
 def borrarCarpeta(ruta):
 
@@ -239,3 +240,110 @@ def test_crear_mapa_barrio_existen_parada_existe(parada, numero, barrios):
 			assert barrio in contenido
 
 	eliminarPosiblesMapasFolium(ruta_relativa)
+
+@pytest.mark.parametrize(["parada1", "numero1", "parada2", "numero2"],
+	[
+		("Cibeles", 70, "Casa", 22),
+		("Casa", 2011, "Amanda", 13),
+		("Amanda", 356, "Cibeles", 22)
+	]
+)
+def test_crear_mapa_recorrido_barrio_no_existen_paradas_existen(numero1, parada1, numero2, parada2):
+
+	ruta_relativa=os.path.join(os.path.abspath(".."), "src")
+
+	eliminarPosiblesMapasFolium(ruta_relativa, "templates_mapas_recorrido", "mapa_recorrido_linea")
+
+	ruta_templates=os.path.join(ruta_relativa, "templates", "templates_mapas_recorrido")
+
+	ruta_html=os.path.join(ruta_templates, "mapa_recorrido_linea.html")
+
+	assert not os.path.exists(ruta_html)
+
+	crearMapaFoliumRecorrido(ruta_relativa, [], [(numero1, parada1, 40, -3)], [(numero2, parada2, 40, -3)])
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert parada1 in contenido
+		assert parada2 in contenido
+		assert f"Parada {numero1}" in contenido
+		assert f"Parada {numero2}" in contenido
+
+	eliminarPosiblesMapasFolium(ruta_relativa, "templates_mapas_recorrido", "mapa_recorrido_linea")
+
+@pytest.mark.parametrize(["parada1", "numero1", "parada2", "numero2", "barrio"],
+	[
+		("Cibeles", 70, "Casa", 22, "Prosperidad"),
+		("Casa", 2011, "Amanda", 13, "Buenavista"),
+		("Amanda", 356, "Cibeles", 22, "Aeropuerto")
+	]
+)
+def test_crear_mapa_recorrido_barrio_existe_paradas_existen(numero1, parada1, numero2, parada2, barrio):
+
+	ruta_relativa=os.path.join(os.path.abspath(".."), "src")
+
+	eliminarPosiblesMapasFolium(ruta_relativa, "templates_mapas_recorrido", "mapa_recorrido_linea")
+
+	ruta_templates=os.path.join(ruta_relativa, "templates", "templates_mapas_recorrido")
+
+	ruta_html=os.path.join(ruta_templates, "mapa_recorrido_linea.html")
+
+	assert not os.path.exists(ruta_html)
+
+	crearMapaFoliumRecorrido(ruta_relativa, [barrio], [(numero1, parada1, 40, -3)], [(numero2, parada2, 40, -3)])
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert parada1 in contenido
+		assert parada2 in contenido
+		assert f"Parada {numero1}" in contenido
+		assert f"Parada {numero2}" in contenido
+		assert barrio in contenido
+
+	eliminarPosiblesMapasFolium(ruta_relativa, "templates_mapas_recorrido", "mapa_recorrido_linea")
+
+@pytest.mark.parametrize(["parada1", "numero1", "parada2", "numero2", "barrios"],
+	[
+		("Cibeles", 70, "Casa", 22, ["Prosperidad", "Aeropuerto", "Buenavista"]),
+		("Casa", 2011, "Amanda", 13, ["Prosperidad", "Buenavista"]),
+		("Amanda", 356, "Cibeles", 22, ["Prosperidad", "Aeropuerto"])
+	]
+)
+def test_crear_mapa_recorrido_barrio_existen_paradas_existen(numero1, parada1, numero2, parada2, barrios):
+
+	ruta_relativa=os.path.join(os.path.abspath(".."), "src")
+
+	eliminarPosiblesMapasFolium(ruta_relativa, "templates_mapas_recorrido", "mapa_recorrido_linea")
+
+	ruta_templates=os.path.join(ruta_relativa, "templates", "templates_mapas_recorrido")
+
+	ruta_html=os.path.join(ruta_templates, "mapa_recorrido_linea.html")
+
+	assert not os.path.exists(ruta_html)
+
+	crearMapaFoliumRecorrido(ruta_relativa, barrios, [(numero1, parada1, 40, -3)], [(numero2, parada2, 40, -3)])
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert parada1 in contenido
+		assert parada2 in contenido
+		assert f"Parada {numero1}" in contenido
+		assert f"Parada {numero2}" in contenido
+		
+		for barrio in barrios:
+
+			assert barrio in contenido
+
+	eliminarPosiblesMapasFolium(ruta_relativa, "templates_mapas_recorrido", "mapa_recorrido_linea")
