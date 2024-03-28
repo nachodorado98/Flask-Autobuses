@@ -2,7 +2,8 @@ import os
 import pytest
 
 from src.utilidades.utils import crearCarpeta, eliminarPosiblesMapasFolium, leerGeoJSON, crearMapaFolium
-from src.utilidades.utils import crearMapaFoliumRecorrido
+from src.utilidades.utils import crearMapaFoliumRecorrido, obtenerToken, obtenerDataAPI, tiempos_lineas_minutos
+from src.utilidades.utils import agruparTiemposLinea, limpiarData, obtenerTiemposParada
 
 def borrarCarpeta(ruta):
 
@@ -347,3 +348,150 @@ def test_crear_mapa_recorrido_barrio_existen_paradas_existen(numero1, parada1, n
 			assert barrio in contenido
 
 	eliminarPosiblesMapasFolium(ruta_relativa, "templates_mapas_recorrido", "mapa_recorrido_linea")
+
+@pytest.mark.parametrize(["correo", "contrasena"],
+	[
+		("correo", "contrasena"),
+		("nacho", "1234"),
+		("nachogolden@gmail.com", "NACHO&ruiz98"),
+		("","")
+	]
+)
+def test_obtener_token_error_credenciales(correo, contrasena):
+
+	assert obtenerToken(correo, contrasena) is None
+
+@pytest.mark.parametrize(["contrasena"],
+	[("contrasena",),("1234",),("NACHO&ruiz98",),("",)]
+)
+def test_obtener_token_error_contrasena(app, contrasena):
+
+	correo=app.config.get("CORREO")
+
+	assert obtenerToken(correo, contrasena) is None
+
+@pytest.mark.parametrize(["correo"],
+	[("correo",),("nacho",),("nachogolden@gmail.com",),("",)]
+)
+def test_obtener_token_error_correo(app, correo):
+
+	contrasena=app.config.get("CONTRASENA")
+
+	assert obtenerToken(correo, contrasena) is None
+
+def test_obtener_token_credenciales_correctas(app):
+
+	correo=app.config.get("CORREO")
+	contrasena=app.config.get("CONTRASENA")
+
+	token=obtenerToken(correo, contrasena)
+
+	assert token is not None
+	assert isinstance(token, str)
+
+@pytest.mark.parametrize(["token"],
+	[("a",),("",),("token",),("gghghhgghwljsdjkf",)]
+)
+def test_obtener_data_api_token_error(token):
+
+	assert obtenerDataAPI(token, 1) is None
+
+@pytest.mark.parametrize(["parada"],
+	[(0,),(10,),(-9,),(12,),(2010,)]
+)
+def test_obtener_data_api_token_correcto_no_existe_parada(app, parada):
+
+	correo=app.config.get("CORREO")
+	contrasena=app.config.get("CONTRASENA")
+
+	token=obtenerToken(correo, contrasena)
+
+	assert obtenerDataAPI(token, parada) is None
+
+@pytest.mark.parametrize(["parada"],
+	[(70,),(77,),(69,),(76,)]
+)
+def test_obtener_data_api_token_correcto_existe_parada(app, parada):
+
+	correo=app.config.get("CORREO")
+	contrasena=app.config.get("CONTRASENA")
+
+	token=obtenerToken(correo, contrasena)
+
+	data=obtenerDataAPI(token, parada)
+
+	assert data is not None
+	assert data["code"]=="00"
+	assert "data" in data.keys()
+
+@pytest.mark.parametrize(["segundos", "minutos"],
+	[(1,0),(530,8),(56,0),(110,1),(121,2)]
+)
+def test_tiempos_lineas_minutos(segundos, minutos):
+
+	assert tiempos_lineas_minutos(("34", segundos))==("34", minutos)
+
+@pytest.mark.parametrize(["tiempos", "resultado"],
+	[
+		([("139", 0),("34", 1),("34", 12),("139", 21)], {"139": [0, 21], "34": [1, 12]}),
+		([("1", 0),("34", 1),("34", 12),("139", 21)], {"139": [21], "34": [1, 12], "1":[0]})
+	]
+)
+def test_agrupar_tiempos_lineas(tiempos, resultado):
+
+	assert agruparTiemposLinea(tiempos)==resultado
+
+def test_limpiar_data_sin_data():
+
+	assert limpiarData({"data":[]}) is None
+
+@pytest.mark.parametrize(["parada"],
+	[(70,),(77,),(69,),(76,)]
+)
+def test_limpiar_data_con_data(app, parada):
+
+	correo=app.config.get("CORREO")
+	contrasena=app.config.get("CONTRASENA")
+
+	token=obtenerToken(correo, contrasena)
+
+	data=obtenerDataAPI(token, parada)
+
+	datos_limpios=limpiarData(data)
+
+	assert datos_limpios is not None
+
+@pytest.mark.parametrize(["correo", "contrasena"],
+	[
+		("correo", "contrasena"),
+		("nacho", "1234"),
+		("nachogolden@gmail.com", "NACHO&ruiz98"),
+		("","")
+	]
+)
+def test_obtener_tiempos_parada_error_credenciales(correo, contrasena):
+
+	assert obtenerTiemposParada(correo, contrasena, 356) is None
+
+@pytest.mark.parametrize(["parada"],
+	[(0,),(10,),(-9,),(12,),(2010,)]
+)
+def test_obtener_tiempos_parada_error_parada(app, parada):
+
+	correo=app.config.get("CORREO")
+	contrasena=app.config.get("CONTRASENA")
+
+	assert obtenerTiemposParada(correo, contrasena, parada) is None
+
+@pytest.mark.parametrize(["parada"],
+	[(70,),(77,),(69,),(76,)]
+)
+def test_obtener_tiempos_parada(app, parada):
+
+	correo=app.config.get("CORREO")
+	contrasena=app.config.get("CONTRASENA")
+
+	tiempos=obtenerTiemposParada(correo, contrasena, parada)
+
+	assert tiempos is not None
+	assert isinstance(tiempos, dict)

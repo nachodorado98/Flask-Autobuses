@@ -23,6 +23,16 @@ def cliente(app):
 	return app.test_client()
 
 @pytest.fixture()
+def cliente_erroneo(app):
+
+	app.config["CORREO"]="Correo"
+
+	app.config["CONTRASENA"]="Contrasena"
+
+	return app.test_client()
+
+
+@pytest.fixture()
 def conexion():
 
 	conexion=Conexion()

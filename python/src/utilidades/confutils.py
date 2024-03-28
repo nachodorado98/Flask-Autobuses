@@ -1,0 +1,5 @@
+URL_BASE="https://openapi.emtmadrid.es/v1"
+ENDPOINT_LOGIN="/mobilitylabs/user/login"
+ENDPOINT_PARADAS="/transport/busemtmad/stops"
+ENDPOINT_DETALLE="/detail"
+ENDPOINT_TIEMPOS="/arrives"

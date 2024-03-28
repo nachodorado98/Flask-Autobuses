@@ -1,0 +1,50 @@
+{% extends 'inicio.html' %}
+
+{% block titulo %}
+
+<h1>Tiempos de la parada Nº {{ parada }}</h1>
+
+{% endblock titulo %}
+
+{% block principal %}
+
+<div class="tarjeta-detalle-tiempos">
+
+    <div class="tarjetas-detalle-tiempos-wrapper">
+
+    {% for linea, tiempos in tiempos_lineas.items() %}
+
+        <div class="tarjeta-tiempo">
+
+            <img src="{{ url_for('static', filename='imagenes/parada.png') }}" alt="tiempo-parada" class="imagen-parada">
+            <h2>Linea {{ linea }}</h2>
+
+            {% for tiempo in tiempos %}
+
+                {% if tiempo==0 %}
+                    <p>&lt;&lt;</p>
+                {% elif tiempo>=45 %}
+                    <p>+45 minutos</p>
+                {% else %}
+                    <p>{{ tiempo }} minutos</p>
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+    {% endfor %}
+
+    </div>
+
+</div>
+
+<div class="contenedor-botones-actualizar-volver">
+    <a href="/detalle_parada/{{ parada }}/tiempos" class="refrescar-tiempos-button">
+        Actualizar tiempos
+        <img src="{{ url_for('static', filename='imagenes/actualizar.png') }}" alt="actualizar-parada" class="imagen-actualizar-parada">
+    </a>
+    <a href="/detalle_parada/{{ parada }}" class="volver-parada-button">Volver a la parada {{ parada }}</a>
+</div>
+
+{% endblock principal %}

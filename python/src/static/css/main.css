@@ -516,6 +516,21 @@ footer {
     margin-bottom: 20px;
 }
 
+.boton-tiempos-lineas {
+    margin-left: 10px;
+    text-decoration: none;
+}
+
+.imagen-tiempos-lineas {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
+
+.boton-tiempos-lineas:hover img {
+    transform: scale(1.2);
+}
+
 .contenedor-mapa-mundial {
     margin-top: 15px;
     border-radius: 8px;
@@ -597,5 +612,106 @@ footer {
 }
 
 .volver-linea-button:hover {
+    background-color: #2980b9;
+}
+
+/*----------------------------------------TIEMPOS PARADA---------------------------------------------*/
+
+.tarjeta-detalle-tiempos {
+    max-height: calc(65vh - 100px);
+    overflow-y: auto;
+    width: 750px;
+    margin: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    transition: transform 0.3s ease-in-out;
+}
+
+.tarjeta-detalle-tiempos::-webkit-scrollbar {
+    width: 10px;
+}
+
+.tarjeta-detalle-tiempos::-webkit-scrollbar-thumb {
+    background-color: #3498db;
+    border-radius: 5px;
+}
+
+.tarjeta-detalle-tiempos-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tarjeta-tiempo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.imagen-parada {
+    width: 70px;
+    height: auto;
+    margin-right: 10px;
+}
+
+.tarjeta-tiempo p {
+    margin: 5px 0;
+    font-size: 18px;
+    color: #fff;
+    background-color: #888;
+    padding: 10px 15px;
+    border-radius: 8px;
+}
+
+.contenedor-botones-actualizar-volver {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.refrescar-tiempos-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    margin-right: 30px;
+}
+
+.refrescar-tiempos-button:hover {
+    background-color: #2980b9;
+}
+
+.imagen-actualizar-parada {
+    width: 20px;
+    height: auto;
+    margin-left: 10px;
+}
+
+.volver-parada-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.volver-parada-button:hover {
     background-color: #2980b9;
 }

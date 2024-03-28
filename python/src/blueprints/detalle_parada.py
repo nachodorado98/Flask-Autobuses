@@ -1,9 +1,9 @@
-from flask import Blueprint, render_template, redirect, send_file
+from flask import Blueprint, render_template, redirect, send_file, current_app
 import os
 
 from src.database.conexion import Conexion
 
-from src.utilidades.utils import eliminarPosiblesMapasFolium, crearMapaFolium
+from src.utilidades.utils import eliminarPosiblesMapasFolium, crearMapaFolium, obtenerTiemposParada
 
 bp_detalle_parada=Blueprint("detalle_parada", __name__)
 
@@ -53,3 +53,30 @@ def visualizarMapaParada(nombre_mapa:str):
 	ruta_mapa=os.path.join(ruta, "templates", "templates_mapas_paradas", nombre_mapa)
 
 	return send_file(ruta_mapa)
+
+@bp_detalle_parada.route("/detalle_parada/<parada>/tiempos")
+def tiempos_parada(parada:int):
+
+	con=Conexion()
+
+	if not con.existe_parada(parada):
+
+		return redirect("/")
+
+	if not con.es_favorita(parada):
+
+		return redirect("/")	
+
+	con.cerrarConexion()
+
+	correo, contrasena=current_app.config.get("CORREO"), current_app.config.get("CONTRASENA")
+
+	tiempos_lineas=obtenerTiemposParada(correo, contrasena, parada)
+
+	if not tiempos_lineas:
+
+		return redirect(f"/detalle_parada/{parada}")	
+
+	return render_template("tiempos_parada.html",
+							parada=parada,
+							tiempos_lineas=tiempos_lineas)

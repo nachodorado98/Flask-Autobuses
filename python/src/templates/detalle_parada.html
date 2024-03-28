@@ -20,7 +20,12 @@
             {{ ciudad }}
         {% endif %}
     </p>
-    <p>Lineas: {{ lineas }}</p>
+    <p>
+        Lineas: {{ lineas }}
+        <a href="/detalle_parada/{{ parada }}/tiempos" class="boton-tiempos-lineas">
+            <img src="{{ url_for('static', filename='imagenes/tiempo.png') }}" alt="boton-tiempos" class="imagen-tiempos-lineas" width="8" height="8">
+        </a>
+    </p>
 
     <div class="contenedor-mapa-mundial">
         <iframe src="/visualizar_mapa_parada/{{ nombre_mapa }}"></iframe>

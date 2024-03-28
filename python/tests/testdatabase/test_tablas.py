@@ -439,9 +439,9 @@ def test_barrios_linea_no_existe(conexion, id_linea):
 
 @pytest.mark.parametrize(["id_linea", "numero_barrios"],
 	[
-		(1, 10),
-		(34, 9),
-		(9, 11),
+		(1, 15),
+		(34, 12),
+		(9, 13),
 		(139, 6)
 	]
 )

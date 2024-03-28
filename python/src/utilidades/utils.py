@@ -1,7 +1,10 @@
 import os
-from typing import List, Dict
+from typing import List, Dict, Optional
 import geopandas as gpd
 import folium
+import requests
+
+from .confutils import URL_BASE, ENDPOINT_LOGIN, ENDPOINT_PARADAS, ENDPOINT_DETALLE, ENDPOINT_TIEMPOS
 
 # Funcion para crear una carpeta si no existe 
 def crearCarpeta(ruta_carpeta:str)->None:
@@ -86,3 +89,93 @@ def crearMapaFoliumRecorrido(ruta:str, barrios:List[str], paradas_ida:List[tuple
 	ruta_archivo_html=os.path.join(ruta_templates, nombre_html)
 
 	mapa.save(ruta_archivo_html)
+
+# Funcion para obtener el token de autenticacion de la API de la EMT
+def obtenerToken(correo:str, contrasena:str)->Optional[str]:
+
+	cabecera={"email":correo, "password":contrasena}
+
+	respuesta=requests.get(f"{URL_BASE}{ENDPOINT_LOGIN}", headers=cabecera)
+
+	if respuesta.status_code!=200:
+
+		return None
+
+	data=respuesta.json()
+
+	if data["code"]!="01":
+
+		return None
+
+	return data["data"][0]["accessToken"]
+
+# Funcion para obtener los datos de la API de la EMT
+def obtenerDataAPI(token:str, id_parada:int)->Dict:
+
+	cabecera={"accessToken":token}
+
+	cuerpo={"stopId":id_parada, "Text_EstimationsRequired_YN":"Y"}
+
+	respuesta=requests.post(f"{URL_BASE}{ENDPOINT_PARADAS}/{id_parada}{ENDPOINT_TIEMPOS}",
+							headers=cabecera,
+							json=cuerpo)
+
+	if respuesta.status_code!=200:
+
+		return None
+
+	data=respuesta.json()
+
+	return None if data["code"]!="00" else data
+
+# Funcion para pasar los minutos a segundos
+def tiempos_lineas_minutos(datos:tuple)->tuple:
+
+    minutos=int(datos[1]/60)
+
+    return datos[0], minutos
+
+# Funcion para agrupar las lineas con sus tiempos
+def agruparTiemposLinea(tiempos:List[tuple])->Dict:
+
+    tiempos_agrupados={}
+
+    for linea, tiempo in tiempos:
+
+        if linea not in tiempos_agrupados:
+
+            tiempos_agrupados[linea]=[tiempo]
+
+        else:
+
+            tiempos_agrupados[linea].append(tiempo)
+
+    return tiempos_agrupados
+
+# Funcion para limpiar los datos de tiempos de la parada
+def limpiarData(data:Dict)->Dict:
+
+	if not data["data"]:
+
+		return None
+
+	tiempos_lineas=[(linea["line"], linea["estimateArrive"]) for linea in data["data"][0]["Arrive"]]
+
+	tiempos_lineas=list(map(tiempos_lineas_minutos, tiempos_lineas))
+
+	return agruparTiemposLinea(tiempos_lineas)
+
+# Funcion para obtener los tiempos de una parada
+def obtenerTiemposParada(correo:str, contrasena:str, parada:int)->Optional[Dict]:
+
+	try:
+
+		token=obtenerToken(correo, contrasena)
+
+		data=obtenerDataAPI(token, parada)
+
+		return limpiarData(data)
+
+	except Exception:
+
+		return None
