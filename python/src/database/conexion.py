@@ -262,4 +262,16 @@ class Conexion:
 
 		return list(map(lambda barrio: barrio["barrio"], barrios))
 
+	# Metodo para obtener las paradas 
+	def obtener_paradas(self, parada_evitar:int=0)->List[tuple]:
 
+		self.c.execute("""SELECT Parada, Nombre
+							FROM paradas
+							WHERE Parada!=%s
+							GROUP BY Parada, Nombre
+							ORDER BY Parada""",
+							(parada_evitar,))
+
+		paradas=self.c.fetchall()
+
+		return list(map(lambda parada: (parada["parada"], parada["nombre"]), paradas))

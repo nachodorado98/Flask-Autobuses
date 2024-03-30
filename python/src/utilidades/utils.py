@@ -1,10 +1,12 @@
 import os
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Union
 import geopandas as gpd
 import folium
 import requests
+from datetime import datetime
 
 from .confutils import URL_BASE, ENDPOINT_LOGIN, ENDPOINT_PARADAS, ENDPOINT_DETALLE, ENDPOINT_TIEMPOS
+from .confutils import ENDPOINT_RUTA
 
 # Funcion para crear una carpeta si no existe 
 def crearCarpeta(ruta_carpeta:str)->None:
@@ -131,26 +133,26 @@ def obtenerDataAPI(token:str, id_parada:int)->Dict:
 # Funcion para pasar los minutos a segundos
 def tiempos_lineas_minutos(datos:tuple)->tuple:
 
-    minutos=int(datos[1]/60)
+	minutos=int(datos[1]/60)
 
-    return datos[0], minutos
+	return datos[0], minutos
 
 # Funcion para agrupar las lineas con sus tiempos
 def agruparTiemposLinea(tiempos:List[tuple])->Dict:
 
-    tiempos_agrupados={}
+	tiempos_agrupados={}
 
-    for linea, tiempo in tiempos:
+	for linea, tiempo in tiempos:
 
-        if linea not in tiempos_agrupados:
+		if linea not in tiempos_agrupados:
 
-            tiempos_agrupados[linea]=[tiempo]
+			tiempos_agrupados[linea]=[tiempo]
 
-        else:
+		else:
 
-            tiempos_agrupados[linea].append(tiempo)
+			tiempos_agrupados[linea].append(tiempo)
 
-    return tiempos_agrupados
+	return tiempos_agrupados
 
 # Funcion para limpiar los datos de tiempos de la parada
 def limpiarData(data:Dict)->Dict:
@@ -175,6 +177,60 @@ def obtenerTiemposParada(correo:str, contrasena:str, parada:int)->Optional[Dict]
 		data=obtenerDataAPI(token, parada)
 
 		return limpiarData(data)
+
+	except Exception:
+
+		return None
+
+# Funcion para obtener la hora actual
+def hora_actual(string:bool=True)->Union[str, tuple[str]]:
+
+	hoy=datetime.now()
+
+	hora_formateada=f"{hoy.hour:02d}"
+	minuto_formateado=f"{hoy.minute:02d}"
+
+	return (hora_formateada, minuto_formateado) if not string else f"{hora_formateada}:{minuto_formateado}"
+
+# Funcion para obtener datos de la parada de la API EMT
+def obtenerDataParadaAPI(token:str, id_parada:int)->Dict:
+
+	cabecera={"accessToken":token}
+
+	respuesta=requests.get(f"{URL_BASE}{ENDPOINT_PARADAS}/{id_parada}{ENDPOINT_DETALLE}",
+							headers=cabecera)
+
+	if respuesta.status_code!=200:
+
+		return None
+
+	data=respuesta.json()
+
+	return None if data["code"]!="00" else data
+
+# Funcion para limpiar los datos de la parada
+def limpiarDataParada(data:Dict)->Dict:
+
+	if not data["data"]:
+
+		return None
+
+	longitud, latitud=data["data"][0]["stops"][0]["geometry"]["coordinates"]
+
+	direccion=data["data"][0]["stops"][0]["postalAddress"]
+
+	return {"latitud":latitud, "longitud":longitud, "direccion":direccion}
+
+# Funcion para obtener los datos en detalle de una parada
+def obtenerDatosParada(correo:str, contrasena:str, parada:int)->Optional[Dict]:
+
+	try:
+
+		token=obtenerToken(correo, contrasena)
+
+		data=obtenerDataParadaAPI(token, parada)
+
+		return limpiarDataParada(data)
 
 	except Exception:
 

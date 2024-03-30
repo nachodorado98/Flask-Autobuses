@@ -450,3 +450,18 @@ def test_barrios_linea_existe(conexion, id_linea, numero_barrios):
 	barrios=conexion.barrios_linea(id_linea)
 
 	assert len(barrios)==numero_barrios
+
+def test_obtener_paradas_todas_paradas(conexion):
+
+	paradas=conexion.obtener_paradas()
+
+	assert len(paradas)==4802
+
+@pytest.mark.parametrize(["parada_evitar"],
+	[(1,),(70,),(356,),(2011,)]
+)
+def test_obtener_paradas_evitando_parada(conexion, parada_evitar):
+
+	paradas=conexion.obtener_paradas(parada_evitar)
+
+	assert len(paradas)==4801

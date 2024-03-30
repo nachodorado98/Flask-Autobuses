@@ -3,7 +3,8 @@ import pytest
 
 from src.utilidades.utils import crearCarpeta, eliminarPosiblesMapasFolium, leerGeoJSON, crearMapaFolium
 from src.utilidades.utils import crearMapaFoliumRecorrido, obtenerToken, obtenerDataAPI, tiempos_lineas_minutos
-from src.utilidades.utils import agruparTiemposLinea, limpiarData, obtenerTiemposParada
+from src.utilidades.utils import agruparTiemposLinea, limpiarData, obtenerTiemposParada, hora_actual
+from src.utilidades.utils import obtenerDataParadaAPI, limpiarDataParada, obtenerDatosParada
 
 def borrarCarpeta(ruta):
 
@@ -495,3 +496,113 @@ def test_obtener_tiempos_parada(app, parada):
 
 	assert tiempos is not None
 	assert isinstance(tiempos, dict)
+
+def test_hora_actual_tupla():
+
+	hora, minuto=hora_actual(string=False)
+
+	assert isinstance(hora, str)
+	assert isinstance(minuto, str)
+
+def test_hora_actual_cadena():
+
+	hora_minuto=hora_actual(string=True)
+
+	assert isinstance(hora_minuto, str)
+
+	hora, minuto=hora_actual(string=False)
+
+	assert hora_minuto==f"{hora}:{minuto}"
+
+@pytest.mark.parametrize(["token"],
+	[("a",),("",),("token",),("gghghhgghwljsdjkf",)]
+)
+def test_obtener_data_parada_api_token_error(token):
+
+	assert obtenerDataParadaAPI(token, 1) is None
+
+@pytest.mark.parametrize(["parada"],
+	[(0,),(10,),(-9,),(12,),(2010,)]
+)
+def test_obtener_data_parada_api_token_correcto_no_existe_parada(app, parada):
+
+	correo=app.config.get("CORREO")
+	contrasena=app.config.get("CONTRASENA")
+
+	token=obtenerToken(correo, contrasena)
+
+	assert obtenerDataParadaAPI(token, parada) is None
+
+@pytest.mark.parametrize(["parada"],
+	[(1,),(356,),(2011,),(70,)]
+)
+def test_obtener_data_parada_api_token_correcto_existe_parada(app, parada):
+
+	correo=app.config.get("CORREO")
+	contrasena=app.config.get("CONTRASENA")
+
+	token=obtenerToken(correo, contrasena)
+
+	data=obtenerDataParadaAPI(token, parada)
+
+	assert data is not None
+	assert data["code"]=="00"
+	assert "data" in data.keys()
+
+def test_limpiar_data_parada_sin_data():
+
+	assert limpiarDataParada({"data":[]}) is None
+
+@pytest.mark.parametrize(["parada"],
+	[(1,),(356,),(2011,),(70,)]
+)
+def test_limpiar_data_parada_con_data(app, parada):
+
+	correo=app.config.get("CORREO")
+	contrasena=app.config.get("CONTRASENA")
+
+	token=obtenerToken(correo, contrasena)
+
+	data=obtenerDataParadaAPI(token, parada)
+
+	datos_limpios=limpiarDataParada(data)
+
+	assert datos_limpios is not None
+	assert isinstance(datos_limpios, dict)
+	assert datos_limpios["latitud"]>datos_limpios["longitud"]
+
+@pytest.mark.parametrize(["correo", "contrasena"],
+	[
+		("correo", "contrasena"),
+		("nacho", "1234"),
+		("nachogolden@gmail.com", "NACHO&ruiz98"),
+		("","")
+	]
+)
+def test_obtener_datos_parada_error_credenciales(correo, contrasena):
+
+	assert obtenerDatosParada(correo, contrasena, 356) is None
+
+@pytest.mark.parametrize(["parada"],
+	[(0,),(10,),(-9,),(12,),(2010,)]
+)
+def test_obtener_datos_parada_error_parada(app, parada):
+
+	correo=app.config.get("CORREO")
+	contrasena=app.config.get("CONTRASENA")
+
+	assert obtenerDatosParada(correo, contrasena, parada) is None
+
+@pytest.mark.parametrize(["parada"],
+	[(1,),(356,),(2011,),(70,)]
+)
+def test_obtener_datos_parada(app, parada):
+
+	correo=app.config.get("CORREO")
+	contrasena=app.config.get("CONTRASENA")
+
+	datos=obtenerDatosParada(correo, contrasena, parada)
+
+	assert datos is not None
+	assert isinstance(datos, dict)
+	assert datos["latitud"]>datos["longitud"]

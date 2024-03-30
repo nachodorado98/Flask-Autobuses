@@ -1,0 +1,39 @@
+{% extends 'inicio.html' %}
+
+{% block titulo %}
+
+<h1>Llevame</h1>
+
+{% endblock titulo %}
+
+{% block principal %}
+
+<form class="formulario-llevame" action="#" method="POST">
+
+    <div class="form-row">
+        <label for="parada-origen"><strong>Parada de Origen:</strong></label>
+        <select id="parada-origen" name="parada-origen" onchange="actualizarParadas()" required>
+            <option value="">Selecciona una parada de origen</option>
+            
+            {% for parada, nombre in paradas_origen %}
+                <option value="{{ parada }}">Nº {{ parada }}: {{ nombre }}</option>
+            {% endfor %}
+
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="parada-destino"><strong>Parada de Destino:</strong></label>
+        <select id="parada-destino" name="parada-destino" required></select>
+    </div>
+
+    <div class="form-row">
+        <label for="hora"><strong>Salir a las:</strong></label>
+        <input type="time" id="hora" name="hora" value="{{ hora }}" required>
+    </div>
+
+    <button type="submit" class="boton-aceptar">Aceptar</button>
+
+</form>
+
+{% endblock principal %}

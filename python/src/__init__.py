@@ -8,6 +8,7 @@ from .blueprints.anadir_parada import bp_anadir_parada
 from .blueprints.paradas_favoritas import bp_paradas_favoritas
 from .blueprints.detalle_parada import bp_detalle_parada
 from .blueprints.recorrido_linea import bp_recorrido_linea
+from .blueprints.llevame import bp_llevame
 
 from .utilidades.utils import crearCarpeta
 
@@ -35,6 +36,7 @@ def crear_app(configuracion:object)->Flask:
 	app.register_blueprint(bp_paradas_favoritas)
 	app.register_blueprint(bp_detalle_parada)
 	app.register_blueprint(bp_recorrido_linea)
+	app.register_blueprint(bp_llevame)
 
 	creacionEntorno()
 
