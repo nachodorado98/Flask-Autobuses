@@ -1,0 +1,29 @@
+{% extends 'inicio.html' %}
+
+{% block titulo %}
+
+<h1>Ruta desde {{ origen }} hasta {{ destino }}</h1>
+
+{% endblock titulo %}
+
+{% block principal %}
+
+<div class="ruta-info">
+    <div class="horas">
+        <p><strong>Hora de salida:</strong> {{ salida }}</p>
+        <p><strong>Hora de llegada:</strong> {{ llegada }}</p>
+    </div>
+    <div class="tiempo-distancia">
+        <p><strong>Duración:</strong> {{ duracion }} minutos</p>
+        <p><strong>Distancia:</strong> {{ distancia }} kilómetros</p>
+    </div>
+    <div class="contenedor-mapa-mundial-ruta">
+        <iframe src="/visualizar_mapa_ruta/{{ nombre_mapa }}"></iframe>
+    </div>
+</div>
+
+<div class="contenedor-volver-llevame">
+    <a href="/llevame" class="volver-llevame-button">Volver</a>
+</div>
+
+{% endblock principal %}

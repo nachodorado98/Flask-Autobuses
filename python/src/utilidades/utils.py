@@ -4,9 +4,10 @@ import geopandas as gpd
 import folium
 import requests
 from datetime import datetime
+from shapely.geometry import Point, LineString
 
 from .confutils import URL_BASE, ENDPOINT_LOGIN, ENDPOINT_PARADAS, ENDPOINT_DETALLE, ENDPOINT_TIEMPOS
-from .confutils import ENDPOINT_RUTA
+from .confutils import ENDPOINT_RUTA, INICIO_MAPA, TIPO_MARKER
 
 # Funcion para crear una carpeta si no existe 
 def crearCarpeta(ruta_carpeta:str)->None:
@@ -235,3 +236,315 @@ def obtenerDatosParada(correo:str, contrasena:str, parada:int)->Optional[Dict]:
 	except Exception:
 
 		return None
+
+# Funcion para validar las paradas
+def paradas_validas(parada1:int, parada2:int)->bool:
+
+	try:
+
+		parada1_entero=int(parada1)
+		parada2_entero=int(parada2)
+
+		return False if parada1_entero==parada2_entero else True
+
+	except Exception:
+
+		return False
+
+# Funcion para validar la hora
+def hora_valida(hora:str)->bool:
+
+	try:
+
+		if len(hora)!=5 or hora[2]!=":":
+
+			return False
+
+		horas, minutos=hora.split(":")
+		
+		horas=int(horas)
+		minutos=int(minutos)
+		
+		return True if 0<=horas<=23 and 0<=minutos<=59 else False
+
+	except Exception:
+
+		return False
+
+# Funcion para separar la hora
+def obtenerHoraMinutos(hora:str)->tuple[int]:
+
+	horas, minutos=hora.split(":")
+
+	return int(horas), int(minutos)
+
+# Funcion para obtener la fecha de hoy
+def obtenerHoy()->tuple[int]:
+
+	hoy=datetime.now()
+
+	return hoy.day, hoy.month, hoy.year
+
+# Funcion para obtener el recorrido de la API EMT
+def obtenerDataRecorridoAPI(token:str,
+							latitud1:float,
+							longitud1:float,
+							direccion1:str,
+							latitud2:float,
+							longitud2:float,
+							direccion2:str,
+							hora:int,
+							minuto:int)->Dict:
+	
+	dia, mes, ano=obtenerHoy()
+
+	cabecera={"accessToken":token}
+
+	cuerpo={"routeType":"P","itinerary":True,"coordinateXFrom":longitud1,"coordinateYFrom":latitud1,
+			"coordinateXTo":longitud2,"coordinateYTo":latitud2,"originName":direccion1,
+			"destinationName":direccion2,"day":dia,"month":mes,"year":ano,"hour":hora,"minute":minuto,
+			"culture": "es","allowBus":True,"allowBike":False}
+
+	respuesta=requests.post(f"{URL_BASE}{ENDPOINT_RUTA}",
+							headers=cabecera,
+							json=cuerpo)
+
+	if respuesta.status_code!=200:
+
+		return None
+
+	data=respuesta.json()
+
+	return None if data["code"]!="00" else data
+
+# Funcion para convertir a datetime una fecha hora dd/mm/yyyy hh:mm:ss
+def convertirStringDatetime(fecha_hora:str)->datetime:
+
+	try:
+
+		fecha, hora=fecha_hora.split(" ")
+
+		dia, mes, ano=fecha.split("/")
+
+		horas, minutos, segundos=hora.split(":")
+
+		return datetime(int(ano), int(mes), int(dia), int(horas), int(minutos), int(segundos))
+
+	except Exception:
+
+		return datetime.now()
+
+# Funcion para limpiar los datos basicos del recorrido parada
+def limpiarDataBasicaRecorrido(data:Dict)->Dict:
+
+	if not data["data"]:
+
+		return None
+
+	return {"descripcion":data["data"]["description"],
+			"salida":convertirStringDatetime(data["data"]["departureTime"]),
+			"llegada":convertirStringDatetime(data["data"]["arrivalTime"]),
+			"duracion":int(data["data"]["duration"]),
+			"distancia":round(data["data"]["distance"],1)}
+
+# Funcion para limpiar el numero del tramo
+def limpiarNumeroTramo(tramo:Dict)->int:
+
+	return tramo["order"]
+
+# Funcion para limpiar datos basicos del tramo
+def limpiarDatosBasicosTramo(tramo:Dict)->Dict:
+
+	tipo="Andando" if tramo["type"]=="Walk" else tramo["type"]
+
+	linea="-" if tramo["type"]=="Walk" else tramo["idLine"]
+
+	return {"tipo":tipo,
+			"duracion":int(tramo["duration"]),
+			"distancia":round(tramo["distance"],1),
+			"linea":linea}
+
+# Funcion para limpiar un punto del tramo
+def limpiarPuntoTramo(punto_tramo:Dict)->Dict:
+
+	punto_coordenadas=punto_tramo["geometry"]["coordinates"]
+
+	objeto_punto=Point(punto_coordenadas)
+
+	nombre=punto_tramo["properties"].get("name")
+
+	descripcion=punto_tramo["properties"].get("description")
+
+	duracion=punto_tramo["properties"].get("duration")
+
+	distancia=punto_tramo["properties"].get("distance")
+
+	return {"punto":objeto_punto,
+			"nombre":"" if nombre is None else nombre,
+			"descripcion": "" if descripcion is None else descripcion,
+			"parada":punto_tramo["properties"].get("idStop"),
+			"duracion":None if duracion is None else int(duracion),
+			"distancia":None if distancia is None else round(distancia,1)}
+
+# Funcion para limpiar un linea del tramo
+def limpiarLineaTramo(linea_tramo:Dict)->Dict:
+
+	linea_coordenadas=linea_tramo["coordinates"]
+
+	return {"linea":LineString(linea_coordenadas)}
+
+# Funcion para unir todos los datos del tramo en un diccionario
+def unirDatosTramo(basico:Dict, origen:Dict, destino:Dict, ruta:Dict, itinerario:Dict)->Dict:
+
+	return {**basico, **origen, **destino, **ruta, **itinerario}
+
+# Funcion para limpiar los datos del tramo
+def limpiarDatosTramo(tramo:Dict)->Dict:
+
+	try:
+
+		datos_basicos_tramo=limpiarDatosBasicosTramo(tramo)
+
+		punto_origen_tramo={"origen":limpiarPuntoTramo(tramo["source"])}
+
+		punto_destino_tramo={"destino":limpiarPuntoTramo(tramo["destination"])}
+
+		puntos_ruta_tramo={"ruta":list(map(limpiarPuntoTramo, tramo["route"]["features"]))}
+
+		linea_itinerario={"itinerario":limpiarLineaTramo(tramo["itinerary"])}
+
+		datos_unificados_tramo=unirDatosTramo(datos_basicos_tramo,
+										punto_origen_tramo,
+										punto_destino_tramo,
+										puntos_ruta_tramo,
+										linea_itinerario)
+
+		return datos_unificados_tramo
+
+	except Exception:
+
+		return {}
+
+# Funcion para limpiar los datos detallados del recorrido
+def limpiarDataDetalleRecorrido(data:Dict)->Dict:
+
+	if not data["data"]:
+
+		return None
+
+	return {limpiarNumeroTramo(tramo): limpiarDatosTramo(tramo) for tramo in data["data"]["sections"]}
+
+# Funcion para limpiar los datos totales del recorrido parada
+def limpiarDataRecorrido(data:Dict)->Dict:
+
+	return {"basico":limpiarDataBasicaRecorrido(data),
+			"detalle":limpiarDataDetalleRecorrido(data)}
+
+# Funcion para obtener los datos del recorrido
+def obtenerDatosRecorrido(correo:str,
+							contrasena:str,
+							latitud1:float,
+							longitud1:float,
+							direccion1:str,
+							latitud2:float,
+							longitud2:float,
+							direccion2:str,
+							hora:int,
+							minuto:int)->Optional[Dict]:
+
+	try:
+
+		token=obtenerToken(correo, contrasena)
+
+		data=obtenerDataRecorridoAPI(token,
+									latitud1,
+									longitud1,
+									direccion1,
+									latitud2,
+									longitud2,
+									direccion2,
+									hora,
+									minuto)
+
+		return limpiarDataRecorrido(data)
+
+	except Exception:
+
+		return None
+
+# Funcion para agregar ua linea al mapa
+def agregarLinea(linea:LineString, mapa:folium.Map)->None:
+
+	linea_geojson=folium.GeoJson(linea.__geo_interface__)
+
+	linea_geojson.add_to(mapa)
+
+# Funcion para obtener la imagen que poner en el marker
+def obtenerHTMLMarker(tipo:str, circulo:bool=False)->str:
+
+	if circulo:
+
+		return """<div style="width: 20px;
+		            height: 20px;
+		            background-color: blue;
+		            border-radius: 50%;
+		            border: 1px solid white;">
+				</div>"""
+	else:
+
+		return f"""<div style="background-color: {TIPO_MARKER[tipo]["color"]};
+		            color: white;
+		            width: {TIPO_MARKER[tipo]["dimension"]}px;
+		            height: {TIPO_MARKER[tipo]["dimension"]}px;
+		            line-height: 30px;
+		            text-align: center;">
+			        <i class="fas fa-{TIPO_MARKER[tipo]["icono"]}"></i>
+			    </div>"""
+
+# Funcion para agregar un punto (marker) al mapa
+def agregarPuntoMarker(latitud:float, longitud:float, tooltip:str, descripcion:str, tipo:str, coordenadas_agregadas:List, mapa:folium.Map, circulo:bool=False)->None:
+
+	if [latitud, longitud] in coordenadas_agregadas:
+
+		latitud+=0.0001
+		longitud+=0.0001
+
+	coordenadas_agregadas.append([latitud, longitud])
+
+	folium.Marker([latitud, longitud],
+					tooltip=None if circulo else tooltip,
+					popup=folium.Popup(descripcion, max_width=10),
+					icon=folium.DivIcon(html=obtenerHTMLMarker(tipo, circulo))).add_to(mapa)
+
+# Funcion para crear el mapa de la ruta con folium y guardarlo en un html
+def crearMapaFoliumRuta(ruta:str, tramos:Dict, nombre_html:str="mapa_ruta.html")->None:
+
+	coordenadas_agregadas=[]
+
+	mapa=folium.Map(location=INICIO_MAPA, zoom_start=11)
+
+	for numero_tramo, tramo in tramos.items():
+
+		tipo, linea, origen, destino=tramo["tipo"], tramo["linea"], tramo["origen"], tramo["destino"]
+
+		descripcion_origen=origen["descripcion"] if tipo!="Bus" else f"INICIO BUS - Linea {linea}"
+
+		descripcion_destino=destino["descripcion"] if tipo!="Bus" else f"FIN BUS - Linea {linea}"
+
+		agregarPuntoMarker(origen["punto"].y, origen["punto"].x, origen["nombre"], descripcion_origen, tipo, coordenadas_agregadas, mapa)
+
+		agregarPuntoMarker(destino["punto"].y, destino["punto"].x, destino["nombre"], descripcion_destino, tipo, coordenadas_agregadas, mapa)
+
+		if tipo=="Bus":
+
+			for parada_ruta in tramo["ruta"][1:-1]:
+
+				agregarPuntoMarker(parada_ruta["punto"].y, parada_ruta["punto"].x, "", parada_ruta["descripcion"], tipo, coordenadas_agregadas, mapa, True)
+
+			agregarLinea(tramo["itinerario"]["linea"], mapa)
+
+	ruta_templates=os.path.join(ruta, "templates", "templates_mapas_ruta")
+
+	ruta_archivo_html=os.path.join(ruta_templates, nombre_html)
+
+	mapa.save(ruta_archivo_html)
