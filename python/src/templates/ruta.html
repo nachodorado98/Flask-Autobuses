@@ -22,8 +22,44 @@
     </div>
 </div>
 
-<div class="contenedor-volver-llevame">
+<div class="contenedor-botones-llevame">
+    <div id="contenedorBoton" style="display: block;">
+        <button id="botonRutaDetalle" class="ruta-detalle-button">Ver Ruta en Detalle</button>
+    </div>
+    <div class="seccion-ruta-detalle" id="contenedorRutaDetalle" style="display: none;">
+
+        <h3 class="titulo-ruta-detalle">Pasos a seguir</h3>
+
+        {% for paso, detalle in pasos_detalle.items() %}
+
+            {% for dato in detalle["origen-destino"] %}
+
+                {% if detalle["tipo"]=="Bus" %}
+
+                    <div class="tarjeta-detalle-ruta" style="background-color: #2980b9;">
+                        <img src="{{ url_for('static', filename='imagenes/autobus.png') }}" alt="paso-bus">
+                        <p><strong>{{ dato }}</strong></p>
+                    </div>
+
+                {% else %}
+
+                    <div class="tarjeta-detalle-ruta" style="background-color: #878787;">
+                        <img src="{{ url_for('static', filename='imagenes/andando.png') }}" alt="paso-andando">
+                        <p><strong>{{ dato }}</strong></p>
+                    </div>
+
+                {% endif %}
+
+            {% endfor %}
+
+        {% endfor %}
+
+        <button id="botonCerrarDetalle" class="ruta-cerrar-button">Cerrar Detalle</button>
+        
+    </div>
     <a href="/llevame" class="volver-llevame-button">Volver</a>
+    <script src="{{ url_for('static', filename='js/abrir_detalle_ruta.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/cerrar_detalle_ruta.js') }}"></script>
 </div>
 
 {% endblock principal %}

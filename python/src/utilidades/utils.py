@@ -47,14 +47,24 @@ def crearMapaFolium(ruta:str, barrios:List[str], datos_parada:Dict, nombre_html:
 
 	geodataframe=leerGeoJSON(ruta, barrios)
 
-	mapa=folium.Map(location=[datos_parada["latitud"], datos_parada["longitud"]], zoom_start=14)
+	mapa=folium.Map(location=[datos_parada["latitud"], datos_parada["longitud"]], zoom_start=13)
 	 
 	folium.GeoJson(geodataframe, name="parada").add_to(mapa)
+
+	html_parada="""<div style="background-color: #2980b9;
+					color: white;
+					width: 20px;
+					height: 20px;
+					line-height: 20px;
+					text-align: center;">
+					<i class="fas fa-bus"></i>
+					</div>"""
 
 	folium.Marker([datos_parada["latitud"], datos_parada["longitud"]],
 					tooltip=f"Parada {datos_parada['numero_parada']}",
 					popup=folium.Popup(f"<h3>{datos_parada['parada']}</h3>",
-					max_width=500)).add_to(mapa)
+					max_width=500),
+					icon=folium.DivIcon(html=html_parada)).add_to(mapa)
 
 	ruta_templates=os.path.join(ruta, "templates", "templates_mapas_paradas")
 
@@ -62,12 +72,24 @@ def crearMapaFolium(ruta:str, barrios:List[str], datos_parada:Dict, nombre_html:
 
 	mapa.save(ruta_archivo_html)
 
+# Funcion para obtener el HTML de las paradas del recorrido
+def obtenerHTMLParadasRecorrido(sentido:str)->str:
+
+	color="blue" if sentido=="IDA" else "red"
+
+	return f"""<div style="width: 15px;
+							height: 15px;
+							background-color: {color};
+							border-radius: 50%;
+							border: 1px solid white;">
+				</div>"""
+
 # Funcion para crear el mapa con folium y guardarlo en un html
 def crearMapaFoliumRecorrido(ruta:str, barrios:List[str], paradas_ida:List[tuple], paradas_vuelta:List[tuple], nombre_html:str="mapa_recorrido_linea.html")->None:
 
 	geodataframe=leerGeoJSON(ruta, barrios)
 
-	mapa=folium.Map(location=[paradas_ida[0][2], paradas_ida[0][3]], zoom_start=13)
+	mapa=folium.Map(INICIO_MAPA, zoom_start=12)
 	 
 	folium.GeoJson(geodataframe, name="recorrido").add_to(mapa)
 
@@ -77,7 +99,7 @@ def crearMapaFoliumRecorrido(ruta:str, barrios:List[str], paradas_ida:List[tuple
 						tooltip=f"Parada {parada_ida[0]}",
 						popup=folium.Popup(f"<h3>{parada_ida[1]}</h3>",
 						max_width=500),
-						icon=folium.Icon(color="blue")).add_to(mapa)
+						icon=folium.DivIcon(html=obtenerHTMLParadasRecorrido("IDA"))).add_to(mapa)
 
 	for parada_vuelta in paradas_vuelta:
 
@@ -85,7 +107,7 @@ def crearMapaFoliumRecorrido(ruta:str, barrios:List[str], paradas_ida:List[tuple
 						tooltip=f"Parada {parada_vuelta[0]}",
 						popup=folium.Popup(f"<h3>{parada_vuelta[1]}</h3>",
 						max_width=500),
-						icon=folium.Icon(color="red")).add_to(mapa)
+						icon=folium.DivIcon(html=obtenerHTMLParadasRecorrido("VUELTA"))).add_to(mapa)
 
 	ruta_templates=os.path.join(ruta, "templates", "templates_mapas_recorrido")
 
@@ -484,22 +506,22 @@ def obtenerHTMLMarker(tipo:str, circulo:bool=False)->str:
 
 	if circulo:
 
-		return """<div style="width: 20px;
-		            height: 20px;
-		            background-color: blue;
-		            border-radius: 50%;
-		            border: 1px solid white;">
+		return """<div style="width: 18px;
+					height: 18px;
+					background-color: #2980b9;
+					border-radius: 50%;
+					border: 1px solid white;">
 				</div>"""
 	else:
 
 		return f"""<div style="background-color: {TIPO_MARKER[tipo]["color"]};
-		            color: white;
-		            width: {TIPO_MARKER[tipo]["dimension"]}px;
-		            height: {TIPO_MARKER[tipo]["dimension"]}px;
-		            line-height: 30px;
-		            text-align: center;">
-			        <i class="fas fa-{TIPO_MARKER[tipo]["icono"]}"></i>
-			    </div>"""
+					color: white;
+					width: {TIPO_MARKER[tipo]["dimension"]}px;
+					height: {TIPO_MARKER[tipo]["dimension"]}px;
+					line-height: {TIPO_MARKER[tipo]["dimension"]}px;
+					text-align: center;">
+					<i class="fas fa-{TIPO_MARKER[tipo]["icono"]}"></i>
+				</div>"""
 
 # Funcion para agregar un punto (marker) al mapa
 def agregarPuntoMarker(latitud:float, longitud:float, tooltip:str, descripcion:str, tipo:str, coordenadas_agregadas:List, mapa:folium.Map, circulo:bool=False)->None:
@@ -548,3 +570,9 @@ def crearMapaFoliumRuta(ruta:str, tramos:Dict, nombre_html:str="mapa_ruta.html")
 	ruta_archivo_html=os.path.join(ruta_templates, nombre_html)
 
 	mapa.save(ruta_archivo_html)
+
+# Funcion para obtener los pasos de detalle de la ruta
+def obtenerPasosDetalleRuta(tramos:Dict)->Dict:
+
+	return {numero_tramo:{"tipo":tramo["tipo"], "origen-destino":[tramo["origen"]["descripcion"],tramo["destino"]["descripcion"]]}
+			for numero_tramo, tramo in tramos.items()}

@@ -5,7 +5,7 @@ from src.database.conexion import Conexion
 
 from src.utilidades.utils import hora_actual, paradas_validas, hora_valida, obtenerDatosParada
 from src.utilidades.utils import obtenerHoraMinutos, obtenerDatosRecorrido, eliminarPosiblesMapasFolium
-from src.utilidades.utils import crearMapaFoliumRuta
+from src.utilidades.utils import crearMapaFoliumRuta, obtenerPasosDetalleRuta
 
 bp_llevame=Blueprint("llevame", __name__)
 
@@ -91,6 +91,8 @@ def obtenerRuta():
 
 	crearMapaFoliumRuta(ruta, datos_recorrido["detalle"], nombre_mapa)
 
+	pasos_detalle=obtenerPasosDetalleRuta(datos_recorrido["detalle"])
+
 	return render_template("ruta.html",
 							origen=datos_parada_origen["direccion"],
 							destino=datos_parada_destino["direccion"],
@@ -98,7 +100,8 @@ def obtenerRuta():
 							llegada=datos_recorrido["basico"]["llegada"].strftime("%H:%M"),
 							distancia=datos_recorrido["basico"]["distancia"],
 							duracion=datos_recorrido["basico"]["duracion"],
-							nombre_mapa=nombre_mapa)
+							nombre_mapa=nombre_mapa,
+							pasos_detalle=pasos_detalle)
 
 @bp_llevame.route("/visualizar_mapa_ruta/<nombre_mapa>")
 def visualizarMapaRuta(nombre_mapa:str):

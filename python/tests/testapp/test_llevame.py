@@ -79,3 +79,5 @@ def test_pagina_ruta(cliente, conexion):
 	assert "Distancia:" in contenido
 	assert "Duración:" in contenido
 	assert "iframe" in contenido
+	assert "Ver Ruta en Detalle" in contenido
+	assert "Pasos a seguir" in contenido

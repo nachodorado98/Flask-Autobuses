@@ -11,9 +11,7 @@ from src.utilidades.utils import hora_valida, obtenerHoraMinutos, obtenerHoy, ob
 from src.utilidades.utils import convertirStringDatetime, limpiarDataBasicaRecorrido, limpiarNumeroTramo
 from src.utilidades.utils import limpiarDatosBasicosTramo, limpiarPuntoTramo, limpiarLineaTramo, unirDatosTramo
 from src.utilidades.utils import limpiarDatosTramo, limpiarDataDetalleRecorrido, limpiarDataRecorrido, obtenerDatosRecorrido
-from src.utilidades.utils import crearMapaFoliumRuta
-
-
+from src.utilidades.utils import crearMapaFoliumRuta, obtenerPasosDetalleRuta
 
 def borrarCarpeta(ruta):
 
@@ -1136,8 +1134,6 @@ def test_crear_mapa_ruta_andando_ruta_larga(puntos_ruta, valores_puntos_no, valo
 
 		contenido=html.read()
 
-		print(contenido)
-
 		assert "[40.47, -3.783]" in contenido
 		assert "[40.469, -3.786]" in contenido
 
@@ -1154,3 +1150,22 @@ def test_crear_mapa_ruta_andando_ruta_larga(puntos_ruta, valores_puntos_no, valo
 		assert "[-3.7, 40.45]" not in contenido
 		
 	eliminarPosiblesMapasFolium(ruta_relativa, "templates_mapas_ruta", "mapa_ruta")
+
+@pytest.mark.parametrize(["numero_tramos"],
+	[(1,),(4,),(3,),(7,),(22,),(13,)]
+)
+def test_obtener_pasos_detalle_ruta(numero_tramos):
+
+	tramo={'tipo':'Andando','origen':{'descripcion':'Desde Av'},'destino':{'descripcion':'Hasta Av'},'ruta':[],'itinerario':{}}
+
+	tramos={numero:tramo for numero in range(1, numero_tramos+1)}
+
+	datos_pasos=obtenerPasosDetalleRuta(tramos)
+
+	assert len(datos_pasos)==numero_tramos
+
+	for valor in ["tipo", "origen-destino"]:
+
+		for numero_paso, datos_paso in datos_pasos.items():
+
+			assert valor in list(datos_paso.keys())
